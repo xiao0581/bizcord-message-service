@@ -1,0 +1,28 @@
+[
+  {
+    "ContainingType": "MessageMicroservice.Controllers.MessagesControllers",
+    "Method": "Get",
+    "RelativePath": "api/MessagesControllers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MessageMicroservice.Controllers.MessagesControllers",
+    "Method": "SendMessage",
+    "RelativePath": "api/MessagesControllers",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "message",
+        "Type": "MessageMicroservice.Messages.MessageSent",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
