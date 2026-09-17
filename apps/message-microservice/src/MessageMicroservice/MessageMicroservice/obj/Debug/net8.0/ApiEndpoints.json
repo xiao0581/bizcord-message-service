@@ -1,8 +1,8 @@
 [
   {
-    "ContainingType": "MessageMicroservice.Controllers.MessagesControllers",
-    "Method": "Get",
-    "RelativePath": "api/MessagesControllers",
+    "ContainingType": "MessageMicroservice.Controllers.MessagesController",
+    "Method": "GetAll",
+    "RelativePath": "api/Messages",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -10,9 +10,78 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "MessageMicroservice.Controllers.MessagesControllers",
-    "Method": "SendMessage",
-    "RelativePath": "api/MessagesControllers",
+    "ContainingType": "MessageMicroservice.Controllers.MessagesController",
+    "Method": "Create",
+    "RelativePath": "api/Messages",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "message",
+        "Type": "MessageMicroservice.Domain.Entities.Message",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MessageMicroservice.Controllers.MessagesController",
+    "Method": "GetById",
+    "RelativePath": "api/Messages/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MessageMicroservice.Controllers.MessagesController",
+    "Method": "Update",
+    "RelativePath": "api/Messages/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "message",
+        "Type": "MessageMicroservice.Domain.Entities.Message",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MessageMicroservice.Controllers.MessagesController",
+    "Method": "Delete",
+    "RelativePath": "api/Messages/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MessageMicroservice.Controllers.MessagesController",
+    "Method": "Publish",
+    "RelativePath": "api/Messages/publish",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,

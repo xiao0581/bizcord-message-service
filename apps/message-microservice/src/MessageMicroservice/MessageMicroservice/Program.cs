@@ -1,5 +1,10 @@
 using EasyNetQ;
+using MessageMicroservice.Application.Interfaces;
+using MessageMicroservice.Application.Services;
+using MessageMicroservice.Domain.Repositories;
+using MessageMicroservice.Infrastructure.Repositories;
 using MessageMicroservice.Messaging;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +19,8 @@ builder.Services.AddSingleton<IBus>(
 
 builder.Services.AddSingleton<IMessageClient, EasyNetQMessageClient>();
 builder.Services.AddHostedService<MessageSubscriber>();
+builder.Services.AddSingleton<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
