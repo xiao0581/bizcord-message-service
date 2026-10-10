@@ -46,9 +46,9 @@ public class MessagesController : ControllerBase
 
     // POST: api/messages
     [HttpPost]
-    public IActionResult Create(Message message)
+    public async Task<IActionResult> Create(Message message)
     {
-        var createdMessage = _messageService.Create(message);
+        var createdMessage = await _messageService.CreateAsync(message);
 
         return CreatedAtAction(
             nameof(GetById),

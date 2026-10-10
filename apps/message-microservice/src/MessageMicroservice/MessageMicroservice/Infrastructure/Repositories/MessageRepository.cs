@@ -24,7 +24,9 @@ public class MessageRepository : IMessageRepository
 
     public void Update(Message message)
     {
-        
+        // The message object is already updated in MessageService.
+        // Since this repository uses in-memory object references,
+        // no additional update operation is required.
     }
 
     public void Delete(Message message)

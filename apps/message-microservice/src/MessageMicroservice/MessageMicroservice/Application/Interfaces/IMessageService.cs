@@ -6,7 +6,7 @@ public interface IMessageService
 {
     IEnumerable<Message> GetAll();
     Message? GetById(Guid id);
-    Message Create(Message message);
+    Task<Message> CreateAsync(Message message);
     bool Update(Guid id, Message message);
     bool Delete(Guid id);
 }

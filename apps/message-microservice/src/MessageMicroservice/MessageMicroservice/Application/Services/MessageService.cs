@@ -1,16 +1,23 @@
 ﻿using MessageMicroservice.Application.Interfaces;
 using MessageMicroservice.Domain.Entities;
 using MessageMicroservice.Domain.Repositories;
+using MessageMicroservice.Messaging;
+using MessageMicroservice.Messages;
+using SharedModels.Events;
 
 namespace MessageMicroservice.Application.Services;
 
 public class MessageService : IMessageService
 {
     private readonly IMessageRepository _repository;
+    private readonly IMessageClient _messageClient;
 
-    public MessageService(IMessageRepository repository)
+    public MessageService(
+        IMessageRepository repository,
+        IMessageClient messageClient)
     {
         _repository = repository;
+        _messageClient = messageClient;
     }
 
     public IEnumerable<Message> GetAll()
@@ -23,7 +30,7 @@ public class MessageService : IMessageService
         return _repository.GetById(id);
     }
 
-    public Message Create(Message message)
+    public async Task<Message> CreateAsync(Message message)
     {
         if (message.Id == Guid.Empty)
         {
@@ -35,7 +42,18 @@ public class MessageService : IMessageService
             message.CreatedAt = DateTime.UtcNow;
         }
 
+       
         _repository.Add(message);
+
+
+        await _messageClient.PublishAsync(new MessagePublished
+        {
+            MessageId = message.Id,
+            ChannelId = message.ChannelId,
+            SenderId = message.SenderId,
+            Content = message.Content,
+            CreatedAt = message.CreatedAt
+        });
 
         return message;
     }

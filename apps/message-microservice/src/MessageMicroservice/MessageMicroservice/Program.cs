@@ -13,8 +13,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 builder.Services.AddSingleton<IBus>(
-    RabbitHutch.CreateBus("host=localhost")
+    RabbitHutch.CreateBus(
+        $"host={builder.Configuration["RabbitMQ:Host"] ?? "localhost"}"
+    )
 );
 
 builder.Services.AddSingleton<IMessageClient, EasyNetQMessageClient>();

@@ -1,4 +1,4 @@
-﻿using MessageMicroservice.Messages;
+﻿using SharedModels.Events;
 
 namespace MessageMicroservice.Messaging;
 
@@ -14,12 +14,12 @@ public class MessageSubscriber : BackgroundService
     protected override async Task ExecuteAsync(
         CancellationToken stoppingToken)
     {
-        await _messageClient.SubscribeAsync<MessageSent>(
+        await _messageClient.SubscribeAsync<MessagePublished>(
             "message-service",
             async message =>
             {
                 Console.WriteLine(
-                    $"收到消息: {message.Sender} - {message.Text}"
+                    $"收到消息: {message.SenderId} - {message.Content}"
                 );
 
                 await Task.CompletedTask;

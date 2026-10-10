@@ -7,6 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageMicroservice", "Mess
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedModels", "SharedModels\SharedModels.csproj", "{1E84BCF4-692E-4DC1-85DA-C3AA39A7D3DB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\docker-compose.yml = ..\..\docker-compose.yml
+		..\..\Dockerfile = ..\..\Dockerfile
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageMicroservice.Tests", "MessageMicroservice.Tests\MessageMicroservice.Tests.csproj", "{38A693EB-75D2-48F9-8DF3-BC700F62B914}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +29,10 @@ Global
 		{1E84BCF4-692E-4DC1-85DA-C3AA39A7D3DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E84BCF4-692E-4DC1-85DA-C3AA39A7D3DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E84BCF4-692E-4DC1-85DA-C3AA39A7D3DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38A693EB-75D2-48F9-8DF3-BC700F62B914}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38A693EB-75D2-48F9-8DF3-BC700F62B914}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38A693EB-75D2-48F9-8DF3-BC700F62B914}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38A693EB-75D2-48F9-8DF3-BC700F62B914}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
