@@ -14,15 +14,15 @@ public class MessageSubscriber : BackgroundService
     protected override async Task ExecuteAsync(
         CancellationToken stoppingToken)
     {
-        await _messageClient.SubscribeAsync<MessagePublished>(
-            "message-service",
-            async message =>
-            {
-                Console.WriteLine(
-                    $"收到消息: {message.SenderId} - {message.Content}"
-                );
+        await _messageClient.SubscribeAsync<MessagePostedEvent>(
+     "message-service",
+     async message =>
+     {
+         Console.WriteLine(
+             $"收到消息: {message.AuthorId} - {message.Content}"
+         );
 
-                await Task.CompletedTask;
-            });
+         await Task.CompletedTask;
+     });
     }
 }

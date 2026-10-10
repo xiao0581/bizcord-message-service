@@ -32,30 +32,27 @@ public class MessageService : IMessageService
 
     public async Task<Message> CreateAsync(Message message)
     {
-        if (message.Id == Guid.Empty)
+        // 1. Create and validate
+        var newMessage = Message.Create(
+            message.ChannelId,
+            message.SenderId,
+            message.Content
+        );
+
+        // 2. Save message
+        _repository.Add(newMessage);
+
+        // 3. Publish event
+        await _messageClient.PublishAsync(new MessagePostedEvent
         {
-            message.Id = Guid.NewGuid();
-        }
-
-        if (message.CreatedAt == default)
-        {
-            message.CreatedAt = DateTime.UtcNow;
-        }
-
-       
-        _repository.Add(message);
-
-
-        await _messageClient.PublishAsync(new MessagePublished
-        {
-            MessageId = message.Id,
-            ChannelId = message.ChannelId,
-            SenderId = message.SenderId,
-            Content = message.Content,
-            CreatedAt = message.CreatedAt
+            MessageId = newMessage.Id,
+            ChannelId = newMessage.ChannelId,
+            AuthorId = newMessage.SenderId,
+            Content = newMessage.Content,
+            PostedAt = newMessage.CreatedAt
         });
 
-        return message;
+        return newMessage;
     }
 
     public bool Update(Guid id, Message message)

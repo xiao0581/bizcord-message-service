@@ -5,7 +5,7 @@ using MessageMicroservice.Domain.Entities;
 using MessageMicroservice.Domain.Repositories;
 using MessageMicroservice.Messaging;
 using SharedModels.Events;
-
+using MessageMicroservice.Domain.Entities;
 namespace MessageMicroservice.Tests;
 
 public class MessageServiceTests
@@ -40,23 +40,30 @@ public class MessageServiceTests
 
         Assert.NotEqual(default(DateTime), result.CreatedAt);
 
- 
+
         repositoryMock.Verify(
-            r => r.Add(It.IsAny<Message>()),
-            Times.Once
-        );
+     r => r.Add(It.Is<Message>(m =>
+         m.Id == result.Id &&
+         m.ChannelId == result.ChannelId &&
+         m.SenderId == result.SenderId &&
+         m.Content == result.Content &&
+         m.CreatedAt == result.CreatedAt
+     )),
+     Times.Once
+ );
 
         messageClientMock.Verify(
-            m => m.PublishAsync(
-                It.Is<MessagePublished>(e =>
-                    e.MessageId == result.Id &&
-                    e.Content == result.Content &&
-                    e.SenderId == result.SenderId &&
-                    e.ChannelId == result.ChannelId
-                )
-            ),
-            Times.Once
-        );
+     m => m.PublishAsync(
+         It.Is<MessagePostedEvent>(e =>
+             e.MessageId == result.Id &&
+             e.ChannelId == result.ChannelId &&
+             e.AuthorId == result.SenderId &&
+             e.Content == result.Content &&
+             e.PostedAt == result.CreatedAt
+         )
+     ),
+     Times.Once
+ );
     }
     [Fact]
     public void Update_ShouldReturnFalse_WhenMessageNotFound()
@@ -190,6 +197,45 @@ public class MessageServiceTests
         repositoryMock.Verify(
             r => r.Delete(existing),
             Times.Once
+        );
+    }
+
+    [Fact]
+    public void Message_Create_Throws_WhenContentIsEmpty()
+    {
+        // Arrange
+        var channelId = Guid.NewGuid();
+        var senderId = Guid.NewGuid();
+
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            Message.Create(channelId, senderId, "")
+        );
+    }
+    [Fact]
+    public void Message_Create_SetsAllFields()
+    {
+        // Arrange
+        var channelId = Guid.NewGuid();
+        var senderId = Guid.NewGuid();
+        var content = "Hello Bizcord";
+
+        // Act
+        var message = Message.Create(
+            channelId,
+            senderId,
+            content
+        );
+
+        // Assert
+        Assert.NotEqual(Guid.Empty, message.Id);
+        Assert.Equal(channelId, message.ChannelId);
+        Assert.Equal(senderId, message.SenderId);
+        Assert.Equal(content, message.Content);
+
+        Assert.True(
+            (DateTime.UtcNow - message.CreatedAt).Duration()
+            < TimeSpan.FromSeconds(5)
         );
     }
 }

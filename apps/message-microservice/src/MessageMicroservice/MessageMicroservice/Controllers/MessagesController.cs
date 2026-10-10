@@ -3,6 +3,8 @@ using MessageMicroservice.Application.Interfaces;
 using MessageMicroservice.Domain.Entities;
 using MessageMicroservice.Messaging;
 using MessageMicroservice.Messages;
+using MessageMicroservice.Contracts.Requests;
+using MessageMicroservice.Domain.Entities;
 
 namespace MessageMicroservice.Controllers;
 
@@ -46,15 +48,29 @@ public class MessagesController : ControllerBase
 
     // POST: api/messages
     [HttpPost]
-    public async Task<IActionResult> Create(Message message)
+    public async Task<IActionResult> Create(CreateMessageRequest request)
     {
-        var createdMessage = await _messageService.CreateAsync(message);
+        var message = new Message
+        {
+            ChannelId = request.ChannelId,
+            SenderId = request.AuthorId,
+            Content = request.Content
+        };
 
-        return CreatedAtAction(
-            nameof(GetById),
-            new { id = createdMessage.Id },
-            createdMessage
-        );
+        try
+        {
+            var createdMessage = await _messageService.CreateAsync(message);
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = createdMessage.Id },
+                createdMessage
+            );
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     // PUT: api/messages/{id}

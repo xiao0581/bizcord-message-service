@@ -1,3 +1,5 @@
+This document represents the initial analysis and high-level architecture design from Week 36. The implementation developed in subsequent weeks focuses on the Messaging Microservice.
+
 # Bizcord – Analysis and Design
 
 ## 1. Project Overview
