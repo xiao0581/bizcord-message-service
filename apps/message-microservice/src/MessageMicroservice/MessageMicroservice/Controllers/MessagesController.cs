@@ -4,7 +4,7 @@ using MessageMicroservice.Domain.Entities;
 using MessageMicroservice.Messaging;
 using MessageMicroservice.Messages;
 using MessageMicroservice.Contracts.Requests;
-using MessageMicroservice.Domain.Entities;
+
 
 namespace MessageMicroservice.Controllers;
 
