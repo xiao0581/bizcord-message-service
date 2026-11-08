@@ -25,8 +25,13 @@ public class MessagesController : ControllerBase
 
     // GET: api/messages
     [HttpGet]
-    public IActionResult GetAll()
+    public IActionResult GetAll(
+      [FromHeader(Name = "X-UserId")] string? userId,
+      [FromHeader(Name = "X-Role")] string? role)
     {
+        Console.WriteLine($"Gateway UserId: {userId}");
+        Console.WriteLine($"Gateway Role: {role}");
+
         var messages = _messageService.GetAll();
 
         return Ok(messages);
