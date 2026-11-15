@@ -5,7 +5,7 @@ using MessageMicroservice.Domain.Entities;
 using MessageMicroservice.Domain.Repositories;
 using MessageMicroservice.Messaging;
 using SharedModels.Events;
-using MessageMicroservice.Domain.Entities;
+
 namespace MessageMicroservice.Tests;
 
 public class MessageServiceTests
