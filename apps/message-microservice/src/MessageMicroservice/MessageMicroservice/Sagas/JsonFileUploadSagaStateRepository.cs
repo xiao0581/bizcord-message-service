@@ -9,14 +9,19 @@ public sealed class JsonFileUploadSagaStateRepository
 {
     private readonly string _folderPath;
 
-    // Serializes file operations within this repository instance.
+    // Protects file operations from concurrent access.
     private readonly SemaphoreSlim _lock = new(1, 1);
 
+    // JSON serialization settings.
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         WriteIndented = true,
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
+
+    // ============================================================
+    // Constructor
+    // ============================================================
 
     public JsonFileUploadSagaStateRepository(string folderPath)
     {
@@ -30,10 +35,15 @@ public sealed class JsonFileUploadSagaStateRepository
 
         _folderPath = folderPath;
 
+        // Ensure the storage directory exists.
         Directory.CreateDirectory(_folderPath);
     }
 
-    // Loads a previously saved Saga state.
+    // ============================================================
+    // Get Saga State
+    // ============================================================
+
+    // Loads an existing Saga state from a JSON file.
     public async Task<FileUploadSagaState?> GetByIdAsync(
         Guid sagaId,
         CancellationToken cancellationToken = default)
@@ -71,6 +81,10 @@ public sealed class JsonFileUploadSagaStateRepository
         }
     }
 
+    // ============================================================
+    // Save Saga State
+    // ============================================================
+
     // Saves the current Saga state to a JSON file.
     public async Task SaveAsync(
         FileUploadSagaState state,
@@ -90,27 +104,33 @@ public sealed class JsonFileUploadSagaStateRepository
 
         try
         {
+            // Ensure the storage directory exists.
             Directory.CreateDirectory(_folderPath);
 
             string filePath = GetFilePath(state.SagaId);
 
-            // Write to a temporary file before replacing the state file.
+            // Create a temporary file for safe writing.
             string temporaryPath =
-                filePath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+                filePath + "." +
+                Guid.NewGuid().ToString("N") +
+                ".tmp";
 
             try
             {
+                // Serialize the Saga state to JSON.
                 string json = JsonSerializer.Serialize(
                     state,
                     JsonOptions
                 );
 
+                // Write the state to the temporary file.
                 await File.WriteAllTextAsync(
                     temporaryPath,
                     json,
                     cancellationToken
                 );
 
+                // Replace the existing state file.
                 File.Move(
                     temporaryPath,
                     filePath,
@@ -119,6 +139,7 @@ public sealed class JsonFileUploadSagaStateRepository
             }
             finally
             {
+                // Remove any remaining temporary file.
                 if (File.Exists(temporaryPath))
                 {
                     File.Delete(temporaryPath);
@@ -131,10 +152,15 @@ public sealed class JsonFileUploadSagaStateRepository
         }
     }
 
+    // ============================================================
+    // File Path
+    // ============================================================
+
     // Returns the JSON file path for a specific Saga.
     private string GetFilePath(Guid sagaId)
     {
-        return Path.Combine(
+        // Explicit namespace avoids the HotChocolate.Path conflict.
+        return System.IO.Path.Combine(
             _folderPath,
             $"{sagaId:N}.json"
         );

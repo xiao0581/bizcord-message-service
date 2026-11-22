@@ -7,17 +7,27 @@ using MessageMicroservice.Infrastructure.Repositories;
 using MessageMicroservice.Messaging;
 using MessageMicroservice.Sagas;
 using MessageMicroservice.Sagas.Services;
+using MessageMicroservice.GraphQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ============================================================
-// API configuration
+// REST API configuration
 // ============================================================
 
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// ============================================================
+// GraphQL configuration - Week 47
+// ============================================================
+
+// Register HotChocolate and the existing MessageQuery resolver.
+// GraphQL reuses IMessageService instead of duplicating business logic.
+builder.Services
+    .AddGraphQLServer()
+    .AddQueryType<MessageQuery>();
 
 // ============================================================
 // RabbitMQ configuration
@@ -56,14 +66,15 @@ builder.Services.AddScoped<
 // ============================================================
 
 // Store Saga state outside the Git repository.
-string sagaStoragePath = Path.Combine(
+// Use System.IO.Path to avoid conflicts with HotChocolate.Path.
+string sagaStoragePath = System.IO.Path.Combine(
     Environment.GetFolderPath(
         Environment.SpecialFolder.LocalApplicationData),
     "Bizcord",
     "W46SagaState"
 );
 
-// Persist Saga state as JSON files for the lab.
+// Persist Saga state as JSON files.
 builder.Services.AddSingleton<
     IFileUploadSagaStateRepository>(
     _ => new JsonFileUploadSagaStateRepository(
@@ -75,7 +86,7 @@ builder.Services.AddSingleton<
 // Saga Orchestrator
 // ============================================================
 
-// The orchestrator coordinates the workflow.
+// Register the existing Saga workflow coordinator.
 builder.Services.AddSingleton<
     FileUploadSagaOrchestrator>();
 
@@ -113,6 +124,7 @@ builder.Services.AddHostedService<
 
 var app = builder.Build();
 
+// Enable Swagger in Development.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -120,10 +132,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
+// Keep the existing REST API endpoints.
 app.MapControllers();
+
+// Register the GraphQL endpoint at /graphql.
+app.MapGraphQL();
 
 app.Run();
 
